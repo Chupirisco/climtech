@@ -1,3 +1,4 @@
+import 'package:climtech/routing/route.dart';
 import 'package:climtech/ui/core/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -15,25 +16,30 @@ class MyApp extends StatelessWidget {
 
       theme: AppTheme.temaClaro,
       darkTheme: AppTheme.temaEscuro,
-      themeMode: ThemeMode.system,
 
-      home: Temporario(),
-    );
-  }
-}
+      // configurar aqui pra mudar o tema
+      themeMode: ThemeMode.light,
 
-class Temporario extends StatelessWidget {
-  const Temporario({super.key});
+      // define a imagem de fundo
+      builder: (context, child) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Image.asset('assets/img/dark.png'),
-          Center(child: Text("é isso", style: TextStyle(fontSize: 50))),
-        ],
-      ),
+        return Scaffold(
+          body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  isDark ? 'assets/img/dark.png' : 'assets/img/light.png',
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: child,
+          ),
+        );
+      },
+      routes: AppRoute.rotas(),
+      initialRoute: '/',
     );
   }
 }

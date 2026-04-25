@@ -21,25 +21,9 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.light,
 
       // define a imagem de fundo
-      builder: (context, child) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-
-        return Scaffold(
-          body: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  isDark ? 'assets/img/dark.png' : 'assets/img/light.png',
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: child,
-          ),
-        );
-      },
-      routes: AppRoute.rotas(),
       initialRoute: '/',
+
+      routes: AppRoute.rotas(),
     );
   }
 }

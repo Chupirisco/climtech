@@ -39,7 +39,7 @@ class Tema {
   );
 
   static final temaEscuro = ColorScheme.dark(
-    brightness: Brightness.light,
+    brightness: Brightness.dark,
 
     surface: CoresClaras.primaria,
     onSurface: CoresEscuras.primaria,

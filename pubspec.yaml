@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   iconify_flutter: ^0.0.7
   provider: ^6.1.5+1
+  animated_toggle_switch: ^0.8.7
 
 dev_dependencies:
   flutter_test:

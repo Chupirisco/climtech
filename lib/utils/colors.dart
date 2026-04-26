@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-abstract final class CoresClaras {
+class CoresClaras {
   static const Color primaria = Color(0XFF000000);
   static final Color secundaria = const Color(
     0XFF3C3C43,

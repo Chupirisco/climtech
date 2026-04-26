@@ -1,7 +1,8 @@
-import 'package:climtech/ui/confg/view_models/tema_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:provider/provider.dart';
+
+import '../view_models/tema_viewmodel.dart';
 
 Widget configCard({required Widget child, required Color backgroundColor}) {
   return Container(
@@ -22,6 +23,6 @@ AnimatedToggleSwitch alternarTema(BuildContext ctx) {
     current: themeController.isDark(ctx),
     first: false,
     second: true,
-    onChanged: (value) => themeController.setTheme(value),
+    onChanged: (value) => themeController.setTheme(value ? 'dark' : 'light'),
   );
 }

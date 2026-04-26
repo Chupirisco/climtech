@@ -1,12 +1,24 @@
+import 'package:climtech/data/services/stored_theme.dart';
 import 'package:flutter/material.dart';
 
 class ThemeController extends ChangeNotifier {
+  final StoreThemePreferences prefs;
+
   ThemeMode _themeMode = ThemeMode.system;
 
   ThemeMode get themeMode => _themeMode;
 
-  void setTheme(bool isDark) {
-    _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+  ThemeController(this.prefs);
+
+  Future<void> loadTheme() async {
+    await prefs.loadTheme();
+    _themeMode = prefs.savedTheme;
+    notifyListeners();
+  }
+
+  Future<void> setTheme(String theme) async {
+    await prefs.saveTheme(theme);
+    _themeMode = prefs.savedTheme;
     notifyListeners();
   }
 

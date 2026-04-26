@@ -14,6 +14,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
   Widget build(BuildContext context) {
     final tema = Theme.of(context).colorScheme;
     return ListView(
+      physics: BouncingScrollPhysics(),
       padding: EdgeInsets.symmetric(vertical: 75, horizontal: 20),
       children: [
         configCard(

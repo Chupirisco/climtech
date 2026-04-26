@@ -1,3 +1,4 @@
+import 'package:climtech/data/services/stored_theme.dart';
 import 'package:climtech/routing/route.dart';
 import 'package:climtech/ui/confg/view_models/tema_viewmodel.dart';
 import 'package:climtech/ui/core/theme.dart';
@@ -8,7 +9,15 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => ThemeController())],
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) {
+            final controller = ThemeController(StoreThemePreferences());
+            controller.loadTheme();
+            return controller;
+          },
+        ),
+      ],
       child: const MyApp(),
     ),
   );
@@ -20,22 +29,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = Provider.of<ThemeController>(context);
-    return AnimatedBuilder(
-      animation: themeController,
-      builder: (context, _) => MaterialApp(
-        debugShowCheckedModeBanner: false,
 
-        theme: AppTheme.temaClaro,
-        darkTheme: AppTheme.temaEscuro,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
 
-        // configurar aqui pra mudar o tema
-        themeMode: themeController.themeMode,
+      theme: AppTheme.temaClaro,
+      darkTheme: AppTheme.temaEscuro,
 
-        // define a imagem de fundo
-        initialRoute: '/',
+      themeMode: themeController.themeMode,
 
-        routes: AppRoute.rotas(),
-      ),
+      initialRoute: '/',
+      routes: AppRoute.rotas(),
     );
   }
 }

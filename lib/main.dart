@@ -3,8 +3,10 @@ import 'package:climtech/routing/route.dart';
 import 'package:climtech/ui/confg/view_models/tema_viewmodel.dart';
 import 'package:climtech/ui/core/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 void main() {
   runApp(
@@ -29,17 +31,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = Provider.of<ThemeController>(context);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    return Sizer(
+      builder: (p0, p1, p2) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+          theme: AppTheme.temaClaro,
+          darkTheme: AppTheme.temaEscuro,
 
-      theme: AppTheme.temaClaro,
-      darkTheme: AppTheme.temaEscuro,
+          themeMode: themeController.themeMode,
 
-      themeMode: themeController.themeMode,
-
-      initialRoute: '/',
-      routes: AppRoute.rotas(),
+          initialRoute: '/',
+          routes: AppRoute.rotas(),
+        );
+      },
     );
   }
 }

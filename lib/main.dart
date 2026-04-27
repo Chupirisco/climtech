@@ -2,6 +2,7 @@ import 'package:climtech/data/services/stored_theme.dart';
 import 'package:climtech/routing/route.dart';
 import 'package:climtech/ui/confg/view_models/tema_viewmodel.dart';
 import 'package:climtech/ui/core/theme.dart';
+import 'package:climtech/ui/home/view_models/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -19,6 +20,7 @@ void main() {
             return controller;
           },
         ),
+        ChangeNotifierProvider(create: (_) => HomeViewmodel()),
       ],
       child: const MyApp(),
     ),

@@ -3,6 +3,9 @@ import 'package:climtech/ui/home/widgets/home_screen.dart';
 import 'package:climtech/utils/icons.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../home/view_models/home_viewmodel.dart';
 
 class BuildAppEstruture extends StatefulWidget {
   const BuildAppEstruture({super.key});
@@ -13,6 +16,19 @@ class BuildAppEstruture extends StatefulWidget {
 
 class _BuildAppEstrutureState extends State<BuildAppEstruture> {
   int indiceSelecionado = 1;
+
+  // init state para carregar tudo o que tem de carregar, menos o tema
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      if (!mounted) {
+        return;
+      }
+      context.read<HomeViewmodel>().carregarLocal();
+    });
+  }
 
   void mudarSelecionado(int index) {
     setState(() {

@@ -46,30 +46,45 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
 
   @override
   Widget build(BuildContext context) {
-    final tema = Theme.of(context).colorScheme;
+    final viewModel = context.watch<HomeViewmodel>();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    if (viewModel.isLoading) {
+      return telaLoading();
+    }
+
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage(
-            isDark ? 'assets/img/dark.png' : 'assets/img/light.png',
+            Theme.of(context).brightness == Brightness.dark
+                ? 'assets/img/dark.png'
+                : 'assets/img/light.png',
           ),
           fit: BoxFit.cover,
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        // navegação
         bottomNavigationBar: BottomAppBar(
-          key: _bottomBarKey,
-          color: tema.onPrimary,
+          color: Theme.of(context).colorScheme.onPrimary,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              abaNavegacao(index: 0, icon: AppIcons.localMarcado, cores: tema),
-              abaNavegacao(index: 1, icon: AppIcons.local, cores: tema),
-              abaNavegacao(index: 2, icon: AppIcons.config, cores: tema),
+              abaNavegacao(
+                index: 0,
+                icon: AppIcons.localMarcado,
+                cores: Theme.of(context).colorScheme,
+              ),
+              abaNavegacao(
+                index: 1,
+                icon: AppIcons.local,
+                cores: Theme.of(context).colorScheme,
+              ),
+              abaNavegacao(
+                index: 2,
+                icon: AppIcons.config,
+                cores: Theme.of(context).colorScheme,
+              ),
             ],
           ),
         ),
@@ -104,5 +119,9 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
         ),
       ),
     );
+  }
+
+  Widget telaLoading() {
+    return Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

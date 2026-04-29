@@ -6,10 +6,13 @@ import 'package:climtech/ui/home/view_models/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:intl/date_symbol_data_local.dart';
+
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-void main() {
+void main() async {
+  await initializeDateFormatting('pt_BR', null);
   runApp(
     MultiProvider(
       providers: [

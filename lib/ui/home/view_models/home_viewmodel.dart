@@ -3,26 +3,49 @@ import 'package:climtech/domain/models/local_model.dart';
 import 'package:flutter/material.dart';
 
 class HomeViewmodel extends ChangeNotifier {
+  bool isLoading = true;
+
   LocalModel listaHorarios = LocalModel(hourly: []);
+
   LocalModel listaHorarioDiaSelecionado = LocalModel(hourly: []);
+  int? temperaturaAgora;
+  int? horaAtual;
+  int? probabilidadeChuvaAtual;
 
-  int? get pegarTemperaturaAtual {
-    if (listaHorarioDiaSelecionado.hourly.isEmpty) return null;
-
-    final agora = DateTime.now();
-
-    final maisProximo = listaHorarioDiaSelecionado.hourly.reduce((a, b) {
-      final diffA = (a.data.difference(agora)).abs();
-      final diffB = (b.data.difference(agora)).abs();
-      return diffA < diffB ? a : b;
-    });
-
-    return maisProximo.temperatura;
+  DateTime get pegarDiaAtual {
+    if (listaHorarioDiaSelecionado.hourly.isEmpty) {
+      return DateTime.now();
+    }
+    return listaHorarioDiaSelecionado.hourly[0].data;
   }
 
-  void carregarLocal() async {
-    listaHorarios = await buscarLocal();
-    mudarDiaSelecionado();
+  Future<void> carregarLocal() async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      listaHorarios = await buscarLocal();
+      mudarDiaSelecionado();
+      notifyListeners();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void atualizarClimaAtual() {
+    if (listaHorarioDiaSelecionado.hourly.isEmpty) return;
+
+    final agora = DateTime.now();
+    horaAtual = agora.hour;
+
+    final itemAtual = listaHorarioDiaSelecionado.hourly.firstWhere(
+      (item) => item.data.hour == horaAtual,
+    );
+
+    temperaturaAgora = itemAtual.temperatura;
+    probabilidadeChuvaAtual = itemAtual.probabilidadeDeChuva;
+
     notifyListeners();
   }
 
@@ -41,6 +64,8 @@ class HomeViewmodel extends ChangeNotifier {
       longitude: listaHorarios.longitude,
       hourly: filtrado,
     );
+
+    atualizarClimaAtual();
 
     notifyListeners();
   }

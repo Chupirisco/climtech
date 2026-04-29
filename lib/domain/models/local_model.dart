@@ -22,8 +22,8 @@ class LocalModel {
 
     return LocalModel(
       nome: 'Ouro Preto do Oeste - RO',
-      latitude: -8.752196,
-      longitude: -63.93106,
+      latitude: -10.7117,
+      longitude: -62.255,
       hourly: lista,
     );
   }

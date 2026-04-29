@@ -1,4 +1,6 @@
-import 'package:climtech/data/repositories/local/consultar_local.dart';
+import 'package:climtech/ui/home/widgets/texto_formatado.dart';
+import 'package:climtech/utils/descobrir_icone.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:climtech/ui/home/view_models/home_viewmodel.dart';
 import 'package:climtech/ui/home/widgets/components.dart';
 import 'package:climtech/utils/icons.dart';
@@ -17,20 +19,41 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final itemScrollController = ItemScrollController();
   @override
   Widget build(BuildContext context) {
     final tema = Theme.of(context).colorScheme;
     final homeProvider = Provider.of<HomeViewmodel>(context);
 
+    // scrollar até a hora atual
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final lista = homeProvider.listaHorarioDiaSelecionado.hourly;
+
+      if (lista.isNotEmpty) {
+        final horaAtual = DateTime.now().hour;
+
+        if (horaAtual < lista.length) {
+          itemScrollController.jumpTo(index: horaAtual);
+        }
+      }
+    });
+
     return ListView(
       physics: BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(vertical: 75, horizontal: margem().right),
+      padding: EdgeInsets.symmetric(horizontal: margem().right),
       children: [
-        homeCard(
+        cardHome(
           tema,
           Row(
             children: [
-              Iconify(AppIcons.sol, size: 30.sp),
+              Iconify(
+                descobrirIcone(
+                  homeProvider.horaAtual ?? 0,
+                  homeProvider.probabilidadeChuvaAtual ?? 0,
+                ),
+                size: 30.sp,
+                color: tema.onSurface,
+              ),
               SizedBox(width: 5.w),
               Expanded(
                 child: Column(
@@ -38,18 +61,67 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   children: [
                     Text(
-                      homeProvider.listaHorarioDiaSelecionado.nome ?? 'ERROR',
+                      homeProvider.listaHorarioDiaSelecionado.nome ??
+                          'Carregando...',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: estiloTexto(15),
                     ),
                     Text(
-                      '${homeProvider.pegarTemperaturaAtual}°',
+                      homeProvider.temperaturaAgora == null
+                          ? 'Carregando'
+                          : '${homeProvider.temperaturaAgora}°',
                       style: estiloTexto(22),
                     ),
                   ],
                 ),
               ),
+            ],
+          ),
+        ),
+
+        Container(
+          margin: EdgeInsets.only(top: 40),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+          width: double.infinity,
+          height: 20.h,
+          clipBehavior: Clip.hardEdge,
+          child: ScrollablePositionedList.builder(
+            itemCount: homeProvider.listaHorarioDiaSelecionado.hourly.length,
+            itemScrollController: itemScrollController,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return infoHoraCard(
+                climaDia: homeProvider.listaHorarioDiaSelecionado.hourly[index],
+                tema: tema,
+              );
+            },
+          ),
+        ),
+
+        cardHome(
+          tema,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${formatarDiaTexto(homeProvider.pegarDiaAtual)} de ${formatarMesTexto(homeProvider.pegarDiaAtual)} de ${formatarAnoTexto(homeProvider.pegarDiaAtual)}',
+                      style: estiloTexto(18),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      formatarDiaExtencoTexto(homeProvider.pegarDiaAtual),
+                      style: estiloTexto(18),
+                    ),
+                  ],
+                ),
+              ),
+              Iconify(AppIcons.calendario, color: tema.onSurface, size: 23.sp),
             ],
           ),
         ),

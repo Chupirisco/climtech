@@ -31,4 +31,10 @@ class AppIcons {
 
   static const String calendario =
       '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14.5 16H1.5C0.67 16 0 15.33 0 14.5V2.5C0 1.67 0.67 1 1.5 1H14.5C15.33 1 16 1.67 16 2.5V14.5C16 15.33 15.33 16 14.5 16ZM1.5 2C1.22 2 1 2.22 1 2.5V14.5C1 14.78 1.22 15 1.5 15H14.5C14.78 15 15 14.78 15 14.5V2.5C15 2.22 14.78 2 14.5 2H1.5Z" fill="white"/> <path d="M4.5 4C4.22 4 4 3.78 4 3.5V0.5C4 0.22 4.22 0 4.5 0C4.78 0 5 0.22 5 0.5V3.5C5 3.78 4.78 4 4.5 4ZM11.5 4C11.22 4 11 3.78 11 3.5V0.5C11 0.22 11.22 0 11.5 0C11.78 0 12 0.22 12 0.5V3.5C12 3.78 11.78 4 11.5 4ZM15.5 6H0.5C0.22 6 0 5.78 0 5.5C0 5.22 0.22 5 0.5 5H15.5C15.78 5 16 5.22 16 5.5C16 5.78 15.78 6 15.5 6Z" fill="white"/> </svg>';
+
+  static const String setaVoltar =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="currentColor" d="M20.834 8.037L9.64 14.5c-1.43.824-1.43 2.175 0 3l11.194 6.463c1.43.826 2.598.15 2.598-1.5V9.537c0-1.65-1.17-2.326-2.598-1.5"/></svg>';
+
+  static const String setaAvancar =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="currentColor" d="M11.166 23.963L22.36 17.5c1.43-.824 1.43-2.175 0-3L11.165 8.037c-1.43-.826-2.598-.15-2.598 1.5v12.926c0 1.65 1.17 2.326 2.598 1.5z"/></svg>';
 }

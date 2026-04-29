@@ -1,4 +1,5 @@
-import 'package:climtech/ui/home/widgets/texto_formatado.dart';
+import 'package:climtech/ui/home/widgets/modal_calendario.dart';
+import 'package:climtech/utils/texto_formatado.dart';
 import 'package:climtech/utils/descobrir_icone.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:climtech/ui/home/view_models/home_viewmodel.dart';
@@ -99,30 +100,40 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        cardHome(
-          tema,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${formatarDiaTexto(homeProvider.pegarDiaAtual)} de ${formatarMesTexto(homeProvider.pegarDiaAtual)} de ${formatarAnoTexto(homeProvider.pegarDiaAtual)}',
-                      style: estiloTexto(18),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      formatarDiaExtencoTexto(homeProvider.pegarDiaAtual),
-                      style: estiloTexto(18),
-                    ),
-                  ],
+        GestureDetector(
+          onTap: () => showDialog(
+            context: context,
+            builder: (context) => ModalCalendario(),
+          ),
+          child: cardHome(
+            tema,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${formatarDiaTexto(homeProvider.pegarDiaAtual)} de ${formatarMesTexto(homeProvider.pegarDiaAtual)} de ${formatarAnoTexto(homeProvider.pegarDiaAtual)}',
+                        style: estiloTexto(18),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        formatarDiaExtencoTexto(homeProvider.pegarDiaAtual),
+                        style: estiloTexto(18),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Iconify(AppIcons.calendario, color: tema.onSurface, size: 23.sp),
-            ],
+                Iconify(
+                  AppIcons.calendario,
+                  color: tema.onSurface,
+                  size: 23.sp,
+                ),
+              ],
+            ),
           ),
         ),
       ],

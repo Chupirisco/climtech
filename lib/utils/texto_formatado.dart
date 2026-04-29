@@ -5,7 +5,9 @@ String formatarDiaTexto(DateTime data) {
 }
 
 String formatarMesTexto(DateTime data) {
-  return DateFormat('MMMM', 'pt_BR').format(data);
+  final mes = DateFormat('MMMM', 'pt_BR').format(data);
+
+  return mes[0].toUpperCase() + mes.substring(1);
 }
 
 String formatarAnoTexto(DateTime data) {

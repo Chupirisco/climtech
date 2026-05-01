@@ -26,7 +26,7 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
       if (!mounted) {
         return;
       }
-      context.read<HomeViewmodel>().carregarLocalSelecionado(DateTime.now());
+      context.read<HomeViewmodel>().carregarDadosLocalAtual(DateTime.now());
     });
   }
 

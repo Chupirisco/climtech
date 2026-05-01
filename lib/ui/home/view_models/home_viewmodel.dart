@@ -1,48 +1,49 @@
 import 'package:climtech/data/repositories/local/consultar_local.dart';
-import 'package:climtech/domain/models/local_model.dart';
+import 'package:climtech/domain/models/temperatura_model.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../domain/models/local_model.dart';
+
 class HomeViewmodel extends ChangeNotifier {
+  // exibe a tela de carregamento
   bool isLoading = true;
 
-  LocalModel listaHorarios = LocalModel(hourly: [], local: Local());
-
-  LocalModel listaHorarioDiaSelecionado = LocalModel(
-    hourly: [],
-    local: Local(),
+  // lista contendo todos os dados meteorologicos com base na localização selecionada/atual
+  LocalModel listaCompleta = LocalModel(
+    temperaturaModel: TemperaturaModel(hourly: []),
   );
+
+  // lista com apenas os dados meteorologicos do dia selecionado
+  LocalModel listaHorarioDiaSelecionado = LocalModel(
+    cidade: 'Carregando...',
+    siglaEstado: '',
+    temperaturaModel: TemperaturaModel(hourly: []),
+  );
+
+  // variaveis e getters para consulta rapida
   int? temperaturaAgora;
   int? horaAtual;
   int? probabilidadeChuvaAtual;
-
-  Local localSelecionado = Local();
-
   DateTime get pegarDiaAtual {
-    if (listaHorarioDiaSelecionado.hourly.isEmpty) {
+    if (listaHorarioDiaSelecionado.temperaturaModel.hourly.isEmpty) {
       return DateTime.now();
     }
-    return listaHorarioDiaSelecionado.hourly[0].data;
+    return listaHorarioDiaSelecionado.temperaturaModel.hourly[0].data;
   }
 
   // executado quando o app inicia, carrega os dados baseado na localização atual
-  Future<void> carregarLocalSelecionado(DateTime time) async {
+  Future<void> carregarDadosLocalAtual(DateTime time) async {
     isLoading = true;
     notifyListeners();
 
-    // pegarlocalAtual já chama obterCidade internamente
     await pegarlocalAtual();
 
     try {
-      listaHorarios = await buscarLocal(
-        lat: localSelecionado.latitude ?? 0,
-        lon: localSelecionado.longitude ?? 0,
+      listaCompleta = await buscarDados(
+        lat: listaCompleta.latitude ?? 0,
+        lon: listaCompleta.longitude ?? 0,
       );
-
-      // Passa cidade e estado para listaHorarios.local
-      listaHorarios.local.cidade = localSelecionado.cidade;
-      listaHorarios.local.estado = localSelecionado.estado;
 
       filtarDia(time);
     } finally {
@@ -51,60 +52,59 @@ class HomeViewmodel extends ChangeNotifier {
     }
   }
 
+  // quando um outro dia é selecionado no modal calendario esse método é chamado
   void filtarDia(DateTime diaSelecionado) {
-    final filtrado = listaHorarios.hourly.where((item) {
+    final filtrado = listaCompleta.temperaturaModel.hourly.where((item) {
       return item.data.year == diaSelecionado.year &&
           item.data.month == diaSelecionado.month &&
           item.data.day == diaSelecionado.day;
     }).toList();
 
     listaHorarioDiaSelecionado = LocalModel(
-      local: Local(
-        cidade: listaHorarios.local.cidade,
-        estado: listaHorarios.local.estado,
-        latitude: listaHorarios.local.latitude,
-        longitude: listaHorarios.local.longitude,
-      ),
-      hourly: filtrado,
+      cidade: listaCompleta.cidade,
+      siglaEstado: listaCompleta.siglaEstado,
+      latitude: listaCompleta.latitude,
+      longitude: listaCompleta.longitude,
+
+      temperaturaModel: TemperaturaModel(hourly: filtrado),
     );
 
     atualizarClimaAtual();
     notifyListeners();
   }
 
+  // atribui valor a algumas variaveis para facilitar sua consulta
   void atualizarClimaAtual() {
-    if (listaHorarioDiaSelecionado.hourly.isEmpty) return;
+    if (listaHorarioDiaSelecionado.temperaturaModel.hourly.isEmpty) return;
 
     final agora = DateTime.now();
     horaAtual = agora.hour;
 
-    // ← orElse evita StateError se a hora não for encontrada
-    final itemAtual = listaHorarioDiaSelecionado.hourly.firstWhere(
-      (item) => item.data.hour == horaAtual,
-      orElse: () => listaHorarioDiaSelecionado.hourly.first,
-    );
+    final itemAtual = listaHorarioDiaSelecionado.temperaturaModel.hourly
+        .firstWhere(
+          (item) => item.data.hour == horaAtual,
+          orElse: () =>
+              listaHorarioDiaSelecionado.temperaturaModel.hourly.first,
+        );
 
     temperaturaAgora = itemAtual.temperatura;
     probabilidadeChuvaAtual = itemAtual.probabilidadeDeChuva;
 
     notifyListeners();
-  } // pega a localização atual do dispositivo
+  }
 
+  // pega a localização atual do dispositivo
   Future<void> pegarlocalAtual() async {
     try {
       Position posicao = await _posicaoAtual();
-      localSelecionado.latitude = posicao.latitude;
-      localSelecionado.longitude = posicao.longitude;
-
-      await obterCidade(
-        localSelecionado.latitude ?? 0,
-        localSelecionado.longitude ?? 0,
-      );
+      listaCompleta.latitude = posicao.latitude;
+      listaCompleta.longitude = posicao.longitude;
     } catch (e) {
       return print(e.toString());
     }
   }
 
+  // checa as permições e faz a busca pela localização
   Future<Position> _posicaoAtual() async {
     LocationPermission permissao;
     bool ativado = await Geolocator.isLocationServiceEnabled();
@@ -128,38 +128,6 @@ class HomeViewmodel extends ChangeNotifier {
     }
 
     return Geolocator.getCurrentPosition();
-  }
-
-  Future<void> obterCidade(double latitude, double longitude) async {
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        latitude,
-        longitude,
-      );
-
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[0];
-
-        localSelecionado.cidade = place.locality?.isNotEmpty == true
-            ? place.locality!
-            : place.subAdministrativeArea?.isNotEmpty == true
-            ? place.subAdministrativeArea!
-            : place.subLocality?.isNotEmpty == true
-            ? place.subLocality!
-            : 'Cidade desconhecida';
-
-        localSelecionado.estado =
-            place.administrativeArea ?? 'Estado desconhecido';
-        return;
-      }
-
-      localSelecionado.cidade = 'Cidade desconhecida';
-      localSelecionado.estado = 'Estado desconhecido';
-    } catch (e) {
-      print('Erro ao obter cidade: $e');
-      localSelecionado.cidade = 'Cidade desconhecida';
-      localSelecionado.estado = 'Estado desconhecido';
-    }
   }
 
   // executa quando um dia é selecionado no calendario

@@ -1,4 +1,4 @@
-import 'package:climtech/domain/models/local_model.dart';
+import 'package:climtech/domain/models/temperatura_model.dart';
 import 'package:climtech/utils/descobrir_icone.dart';
 import 'package:climtech/utils/estilos_pradroes.dart';
 import 'package:flutter/material.dart';

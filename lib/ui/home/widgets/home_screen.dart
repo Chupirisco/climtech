@@ -28,7 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // scrollar até a hora atual
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final lista = homeProvider.listaHorarioDiaSelecionado.hourly;
+      final lista =
+          homeProvider.listaHorarioDiaSelecionado.temperaturaModel.hourly;
 
       if (lista.isNotEmpty) {
         final horaAtual = DateTime.now().hour;
@@ -62,8 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   children: [
                     Text(
-                      homeProvider.listaHorarioDiaSelecionado.local.cidade ??
-                          'Carregando...',
+                      formatarLocal(
+                        homeProvider.listaHorarioDiaSelecionado.cidade!,
+                        homeProvider.listaHorarioDiaSelecionado.siglaEstado!,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: estiloTexto(15),
@@ -88,12 +91,19 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 20.h,
           clipBehavior: Clip.hardEdge,
           child: ScrollablePositionedList.builder(
-            itemCount: homeProvider.listaHorarioDiaSelecionado.hourly.length,
+            itemCount: homeProvider
+                .listaHorarioDiaSelecionado
+                .temperaturaModel
+                .hourly
+                .length,
             itemScrollController: itemScrollController,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               return infoHoraCard(
-                climaDia: homeProvider.listaHorarioDiaSelecionado.hourly[index],
+                climaDia: homeProvider
+                    .listaHorarioDiaSelecionado
+                    .temperaturaModel
+                    .hourly[index],
                 tema: tema,
               );
             },

@@ -1,5 +1,6 @@
 import 'package:climtech/ui/confg/widgets/config_screen.dart';
 import 'package:climtech/ui/home/widgets/home_screen.dart';
+import 'package:climtech/ui/select_location/widgets/select_location_screen.dart';
 import 'package:climtech/utils/icons.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
@@ -37,7 +38,7 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
   }
 
   final List<Widget> telas = [
-    Center(child: Text('Edit')),
+    SelectLocationScreen(),
     HomeScreen(),
     ConfigScreen(),
   ];
@@ -45,10 +46,6 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<HomeViewmodel>();
-
-    if (viewModel.isLoading) {
-      return telaLoading();
-    }
 
     return Container(
       decoration: BoxDecoration(
@@ -61,33 +58,38 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
           fit: BoxFit.cover,
         ),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        bottomNavigationBar: BottomAppBar(
-          color: Theme.of(context).colorScheme.onPrimary,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              abaNavegacao(
-                index: 0,
-                icon: AppIcons.localMarcado,
-                cores: Theme.of(context).colorScheme,
+      child: viewModel.isLoading
+          ? Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Center(child: CircularProgressIndicator()),
+            )
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              bottomNavigationBar: BottomAppBar(
+                color: Theme.of(context).colorScheme.onPrimary,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    abaNavegacao(
+                      index: 0,
+                      icon: AppIcons.localMarcado,
+                      cores: Theme.of(context).colorScheme,
+                    ),
+                    abaNavegacao(
+                      index: 1,
+                      icon: AppIcons.local,
+                      cores: Theme.of(context).colorScheme,
+                    ),
+                    abaNavegacao(
+                      index: 2,
+                      icon: AppIcons.config,
+                      cores: Theme.of(context).colorScheme,
+                    ),
+                  ],
+                ),
               ),
-              abaNavegacao(
-                index: 1,
-                icon: AppIcons.local,
-                cores: Theme.of(context).colorScheme,
-              ),
-              abaNavegacao(
-                index: 2,
-                icon: AppIcons.config,
-                cores: Theme.of(context).colorScheme,
-              ),
-            ],
-          ),
-        ),
-        body: telas[indiceSelecionado],
-      ),
+              body: telas[indiceSelecionado],
+            ),
     );
   }
 
@@ -117,9 +119,5 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
         ),
       ),
     );
-  }
-
-  Widget telaLoading() {
-    return Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

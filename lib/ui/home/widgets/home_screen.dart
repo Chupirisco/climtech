@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   children: [
                     Text(
-                      homeProvider.listaHorarioDiaSelecionado.nome ??
+                      homeProvider.listaHorarioDiaSelecionado.local.cidade ??
                           'Carregando...',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

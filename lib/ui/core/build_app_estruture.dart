@@ -26,7 +26,7 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
       if (!mounted) {
         return;
       }
-      context.read<HomeViewmodel>().carregarLocal();
+      context.read<HomeViewmodel>().carregarLocalSelecionado(DateTime.now());
     });
   }
 
@@ -41,8 +41,6 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
     HomeScreen(),
     ConfigScreen(),
   ];
-
-  final GlobalKey _bottomBarKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {

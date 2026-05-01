@@ -1,5 +1,5 @@
 name: climtech
-description: "A new Flutter project."
+description: "Um projeto feito em flutter para monitorar a clima na sua localização!"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -43,6 +43,8 @@ dependencies:
   intl: ^0.20.2
   scrollable_positioned_list: ^0.3.8
   table_calendar: ^3.2.0
+  geolocator: ^14.0.2
+  geocoding: ^4.0.0
 
 dev_dependencies:
   flutter_test:

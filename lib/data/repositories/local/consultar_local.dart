@@ -5,9 +5,12 @@ import 'dart:convert';
 import 'package:climtech/domain/models/local_model.dart';
 import 'package:http/http.dart' as http;
 
-Future<LocalModel> buscarLocal() async {
+Future<LocalModel> buscarLocal({
+  required double lat,
+  required double lon,
+}) async {
   final url = Uri.parse(
-    'https://api.open-meteo.com/v1/forecast?latitude=-8.76&longitude=-63.90&hourly=temperature_2m,precipitation_probability&forecast_days=14&timezone=auto',
+    'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&hourly=temperature_2m,precipitation_probability&forecast_days=14&timezone=auto&model=ecmwf',
   );
 
   final resposta = await http.get(
@@ -16,14 +19,12 @@ Future<LocalModel> buscarLocal() async {
   );
 
   if (resposta.statusCode != 200) {
-    print('Deu pau');
-    print(resposta.statusCode);
-    return LocalModel(hourly: []);
+    return LocalModel(hourly: [], local: Local());
   }
 
   final body = jsonDecode(resposta.body)['hourly'];
 
-  LocalModel localModel = LocalModel.fromJson(body);
+  LocalModel localModel = LocalModel.fromJson(body, lat, lon);
 
   return localModel;
 }

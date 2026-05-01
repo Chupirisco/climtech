@@ -6,8 +6,8 @@ import 'package:climtech/utils/icons.dart';
 import 'package:climtech/utils/texto_formatado.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ModalCalendario extends StatefulWidget {
@@ -27,62 +27,101 @@ class _ModalCalendarioState extends State<ModalCalendario> {
       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
       child: Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        clipBehavior: Clip.hardEdge,
         backgroundColor: tema.onPrimary, // cor de fundo do dialog
-        child: TableCalendar(
-          locale: 'pt_BR',
-          focusedDay: prov.pegarDiaAtual,
-          firstDay: DateTime.utc(2026, 01, 01),
-          lastDay: DateTime.utc(2026, 12, 31),
-          currentDay: prov.pegarDiaAtual,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TableCalendar(
+              locale: 'pt_BR',
+              focusedDay: prov.pegarDiaAtual,
+              firstDay: DateTime.utc(2026, 01, 01),
+              lastDay: DateTime.utc(2026, 12, 31),
+              currentDay: prov.pegarDiaAtual,
 
-          // Controla quais dias podem ser selecionados
-          selectedDayPredicate: (day) => isSameDay(day, prov.pegarDiaAtual),
+              // Controla quais dias podem ser selecionados
+              selectedDayPredicate: (day) => isSameDay(day, prov.pegarDiaAtual),
 
-          // Só permite selecionar dentro dos 14 dias
-          onDaySelected: (selectedDay, focusedDay) {
-            final hoje = DateTime.now();
-            final inicio = DateTime(hoje.year, hoje.month, hoje.day);
-            final fim = inicio.add(const Duration(days: 13));
-            final dia = DateTime(
-              selectedDay.year,
-              selectedDay.month,
-              selectedDay.day,
-            );
+              // Só permite selecionar dentro dos 14 dias
+              onDaySelected: (selectedDay, focusedDay) {
+                final hoje = DateTime.now();
+                final inicio = DateTime(hoje.year, hoje.month, hoje.day);
+                final fim = inicio.add(const Duration(days: 13));
+                final dia = DateTime(
+                  selectedDay.year,
+                  selectedDay.month,
+                  selectedDay.day,
+                );
 
-            final dentroDoIntervalo =
-                !dia.isBefore(inicio) && !dia.isAfter(fim);
+                final dentroDoIntervalo =
+                    !dia.isBefore(inicio) && !dia.isAfter(fim);
 
-            if (dentroDoIntervalo) {
-              //  prov.carregarLocal(selectedDay)
-              prov.carregarLocal(); // chame o método do seu viewmodel que atualiza o dia
-              Navigator.of(context).pop();
-            }
-            // Se estiver fora do intervalo, não faz nada — dia bloqueado
-          },
-          // Cabeçalho
-          headerStyle: _headerStyle(tema),
+                if (dentroDoIntervalo) {
+                  //preciso colocar um metodo aqui para carregar
+                  prov.mudarDia(selectedDay);
 
-          // Estilo dos dias da semana (dom, seg, ter...)
-          daysOfWeekStyle: _daysOfWeekStyle(tema),
+                  Navigator.of(context).pop();
+                }
+              },
 
-          // Estilo dos dias do calendário
-          calendarStyle: _calendarStyle(prov.pegarDiaAtual),
+              // Cabeçalho
+              headerStyle: _headerStyle(tema),
 
-          // Builder customizado para cada célula de dia
-          calendarBuilders: CalendarBuilders(
-            defaultBuilder: (context, day, focusedDay) =>
-                _dayCell(day, isToday: false, isSelected: false),
-            todayBuilder: (context, day, focusedDay) =>
-                _dayCell(day, isToday: true, isSelected: false),
-            selectedBuilder: (context, day, focusedDay) =>
-                _dayCell(day, isToday: false, isSelected: true),
-            outsideBuilder: (context, day, focusedDay) => _dayCell(
-              day,
-              isToday: false,
-              isSelected: false,
-              isOutside: true,
+              // Estilo dos dias da semana (dom, seg, ter...)
+              daysOfWeekStyle: _daysOfWeekStyle(tema),
+
+              // Estilo dos dias do calendário
+              calendarStyle: _calendarStyle(prov.pegarDiaAtual),
+
+              // Builder customizado para cada célula de dia
+              calendarBuilders: CalendarBuilders(
+                defaultBuilder: (context, day, focusedDay) =>
+                    _dayCell(day, tema, isToday: false, isSelected: false),
+                todayBuilder: (context, day, focusedDay) =>
+                    _dayCell(day, tema, isToday: true, isSelected: false),
+                selectedBuilder: (context, day, focusedDay) => _dayCell(
+                  day,
+                  tema,
+                  isToday: false,
+                  isSelected: true,
+                  isOutside:
+                      day.month != focusedDay.month ||
+                      day.year != focusedDay.year,
+                ),
+                outsideBuilder: (context, day, focusedDay) => _dayCell(
+                  day,
+                  tema,
+                  isToday: false,
+                  isSelected: false,
+                  isOutside: true,
+                ),
+              ),
             ),
-          ),
+
+            //legendas
+            SizedBox(height: 0.5.h),
+            Text('Legenda', style: estiloTexto(14)),
+            Padding(
+              padding: EdgeInsets.only(left: 1.w),
+              child: Row(
+                children: [
+                  Container(width: 15.sp, height: 15.sp, color: tema.surface),
+                  Text(' Dia selecionado', style: estiloTexto(14)),
+                ],
+              ),
+            ),
+            SizedBox(height: 0.5.h),
+            Padding(
+              padding: EdgeInsets.only(left: 1.w),
+              child: Row(
+                children: [
+                  Container(width: 15.sp, height: 15.sp, color: tema.secondary),
+                  Text(' Dias selecionaveis', style: estiloTexto(14)),
+                ],
+              ),
+            ),
+            SizedBox(height: 2.h),
+          ],
         ),
       ),
     );
@@ -90,7 +129,8 @@ class _ModalCalendarioState extends State<ModalCalendario> {
 
   // ── Célula de cada dia ──────────────────────────────────────────────────────
   Widget _dayCell(
-    DateTime day, {
+    DateTime day,
+    ColorScheme tema, {
     required bool isToday,
     required bool isSelected,
     bool isOutside = false,
@@ -108,18 +148,18 @@ class _ModalCalendarioState extends State<ModalCalendario> {
     final isDentroDosPeriodo =
         !diaAtual.isBefore(inicioPeriodo) && !diaAtual.isAfter(fimPeriodo);
 
-    if (isToday) {
-      background = Colors.white;
-      textColor = Colors.black;
+    if (isOutside) {
+      background = Colors.transparent;
+      textColor = Colors.transparent;
     } else if (isSelected) {
-      background = Colors.blue;
-      textColor = Colors.white;
+      background = tema.surface;
+      textColor = tema.onSurface;
     } else if (isDentroDosPeriodo) {
-      background = Colors.red; // cor dos 14 dias a partir de hoje
-      textColor = Colors.white; // cor do texto dentro do período
+      background = tema.secondary;
+      textColor = tema.onSurface;
     } else {
-      background = const Color(0xFFDDE3EA);
-      textColor = isOutside ? Colors.grey : Colors.black;
+      background = tema.onSecondary;
+      textColor = tema.onSurface;
     }
 
     return Container(
@@ -151,9 +191,17 @@ class _ModalCalendarioState extends State<ModalCalendario> {
       titleTextStyle: estiloTexto(16),
 
       // Ícone de seta esquerda (voltar mês)
-      leftChevronIcon: Iconify(AppIcons.setaVoltar, color: tema.onSurface),
+      leftChevronIcon: Iconify(
+        AppIcons.setaVoltar,
+        color: tema.onSurface,
+        size: 23.sp,
+      ),
       // Ícone de seta direita (avançar mês)
-      rightChevronIcon: Iconify(AppIcons.setaAvancar, color: tema.onSurface),
+      rightChevronIcon: Iconify(
+        AppIcons.setaAvancar,
+        color: tema.onSurface,
+        size: 23.sp,
+      ),
       leftChevronPadding: const EdgeInsets.only(left: 4),
       rightChevronPadding: const EdgeInsets.only(right: 4),
       headerPadding: const EdgeInsets.symmetric(vertical: 8),

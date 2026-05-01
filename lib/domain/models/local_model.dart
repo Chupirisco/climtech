@@ -1,13 +1,14 @@
 class LocalModel {
-  String? nome = 'Ouro Preto do Oeste - RO';
-  double? latitude = -8.752196;
-  double? longitude = -63.93106;
-
+  Local local;
   List<TemperaturaEClima> hourly;
 
-  LocalModel({this.nome, required this.hourly, this.latitude, this.longitude});
+  LocalModel({required this.hourly, required this.local});
 
-  factory LocalModel.fromJson(Map<String, dynamic> json) {
+  factory LocalModel.fromJson(
+    Map<String, dynamic> json,
+    double lat,
+    double lon,
+  ) {
     List<TemperaturaEClima> lista = [];
 
     for (int i = 0; i < json['time'].length; i++) {
@@ -21,9 +22,12 @@ class LocalModel {
     }
 
     return LocalModel(
-      nome: 'Ouro Preto do Oeste - RO',
-      latitude: -10.7117,
-      longitude: -62.255,
+      local: Local(
+        cidade: 'Não encontrado',
+        estado: 'Não encontrado',
+        latitude: lat,
+        longitude: lon,
+      ),
       hourly: lista,
     );
   }
@@ -39,4 +43,13 @@ class TemperaturaEClima {
     required this.temperatura,
     required this.probabilidadeDeChuva,
   });
+}
+
+class Local {
+  String? cidade;
+  String? estado;
+  double? latitude;
+  double? longitude;
+
+  Local({this.cidade, this.estado, this.latitude, this.longitude});
 }

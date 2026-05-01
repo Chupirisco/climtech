@@ -26,7 +26,9 @@ Widget infoHoraCard({
   final hora = DateFormat('HH').format(climaDia.data);
 
   String horaFormatada() {
-    if (int.parse(hora) == DateTime.now().hour) {
+    final hoje = DateTime.now();
+
+    if (int.parse(hora) == hoje.hour && climaDia.data.day == hoje.day) {
       return 'Agora';
     } else {
       return int.parse(hora) <= 12 ? '$hora AM' : '$hora PM';

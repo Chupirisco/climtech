@@ -82,3 +82,71 @@ Future<Map<String, String>> obterCidadeEstado(double lat, double lon) async {
 
   return {'cidade': cidade, 'estado': estado};
 }
+
+class CidadesRepository {
+  static const _baseUrl =
+      'https://servicodados.ibge.gov.br/api/v1/localidades/municipios';
+
+  Future<List<CidadeModel>> buscarPorNome(String query) async {
+    final url = Uri.parse('$_baseUrl?nome=${Uri.encodeComponent(query)}');
+    final response = await http.get(url);
+
+    if (response.statusCode != 200) {
+      throw Exception('Erro ao buscar municípios: ${response.statusCode}');
+    }
+
+    final List<dynamic> json = jsonDecode(response.body);
+
+    return json.map((e) => CidadeModel.fromJson(e)).take(5).toList();
+  }
+}
+
+Future<List<String>> fetchCities(String stateCode, String query) async {
+  // Simula latência de rede
+  await Future.delayed(const Duration(milliseconds: 600));
+
+  // TODO: substituir pelo endpoint real, ex.:
+  //   https://servicodados.ibge.gov.br/api/v1/localidades/estados/$stateCode/municipios
+  // e filtrar pelo query no retorno.
+
+  const fakeCities = {
+    'RO': [
+      'Porto Velho',
+      'Ji-Paraná',
+      'Ariquemes',
+      'Vilhena',
+      'Cacoal',
+      'Rolim de Moura',
+      'Nova União',
+      'Jaru',
+    ],
+    'SP': [
+      'São Paulo',
+      'Campinas',
+      'Santos',
+      'Sorocaba',
+      'Ribeirão Preto',
+      'São José dos Campos',
+    ],
+    'RJ': [
+      'Rio de Janeiro',
+      'Niterói',
+      'Duque de Caxias',
+      'Petrópolis',
+      'Volta Redonda',
+    ],
+    'MG': [
+      'Belo Horizonte',
+      'Uberlândia',
+      'Contagem',
+      'Juiz de Fora',
+      'Montes Claros',
+    ],
+  };
+
+  final list =
+      fakeCities[stateCode] ??
+      ['(sem dados para $stateCode — conecte a API real)'];
+  final q = query.toLowerCase();
+  return list.where((c) => c.toLowerCase().contains(q)).take(8).toList();
+}

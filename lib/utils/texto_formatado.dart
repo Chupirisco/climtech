@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:diacritic/diacritic.dart';
 
 String formatarDiaTexto(DateTime data) {
   return DateFormat('dd').format(data);
@@ -21,4 +22,8 @@ String formatarDiaExtencoTexto(DateTime data) {
 
 String formatarLocal(String cidade, String ul) {
   return '$cidade - $ul';
+}
+
+String normalizarTexto(String texto) {
+  return removeDiacritics(texto).toLowerCase();
 }

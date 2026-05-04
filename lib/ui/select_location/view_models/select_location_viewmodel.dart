@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:climtech/utils/texto_formatado.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/repositories/local/consultar_local.dart';
 
 class SelectLocationViewmodel extends ChangeNotifier {
   // ─── Seleções finais ───────────────────────────────────────────────────────
-
   BrazilianState? _selectedState;
   String? _selectedCity;
 
@@ -69,7 +69,7 @@ class SelectLocationViewmodel extends ChangeNotifier {
   /// Filtra a lista de estados conforme o texto digitado.
   /// Retorna `true` se há sugestões, `false` se a lista ficou vazia.
   bool onStateQueryChanged(String query) {
-    final q = query.toLowerCase().trim();
+    final q = normalizarTexto(query).trim();
 
     if (q.isEmpty) {
       _stateSuggestions = [];
@@ -78,11 +78,12 @@ class SelectLocationViewmodel extends ChangeNotifier {
     }
 
     _stateSuggestions = allStates
-        .where(
-          (s) =>
-              s.name.toLowerCase().contains(q) ||
-              s.code.toLowerCase().contains(q),
-        )
+        .where((s) {
+          final name = normalizarTexto(s.name);
+          final code = s.code.toLowerCase();
+
+          return name.startsWith(q) || code.startsWith(q);
+        })
         .take(4)
         .toList();
 
@@ -138,7 +139,7 @@ class SelectLocationViewmodel extends ChangeNotifier {
     });
   }
 
-  /// Confirma a seleção de uma cidade.
+  // Confirma a seleção de uma cidade.
   void selectCity(String city) {
     _selectedCity = city;
     _citySuggestions = [];

@@ -5,7 +5,8 @@ import 'dart:convert';
 import 'package:climtech/domain/models/temperatura_model.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../domain/models/local_model.dart';
+import '../../../domain/models/locais_salvos_model.dart';
+import '../../../domain/models/local_model_modal.dart';
 
 Future<LocalModel> buscarDados({
   required double lat,
@@ -83,24 +84,6 @@ Future<Map<String, String>> obterCidadeEstado(double lat, double lon) async {
   return {'cidade': cidade, 'estado': estado};
 }
 
-class CidadesRepository {
-  static const _baseUrl =
-      'https://servicodados.ibge.gov.br/api/v1/localidades/municipios';
-
-  Future<List<CidadeModel>> buscarPorNome(String query) async {
-    final url = Uri.parse('$_baseUrl?nome=${Uri.encodeComponent(query)}');
-    final response = await http.get(url);
-
-    if (response.statusCode != 200) {
-      throw Exception('Erro ao buscar municípios: ${response.statusCode}');
-    }
-
-    final List<dynamic> json = jsonDecode(response.body);
-
-    return json.map((e) => CidadeModel.fromJson(e)).take(5).toList();
-  }
-}
-
 Future<List<String>> fetchCities(String stateCode, String query) async {
   // Simula latência de rede
   await Future.delayed(const Duration(milliseconds: 600));
@@ -149,4 +132,62 @@ Future<List<String>> fetchCities(String stateCode, String query) async {
       ['(sem dados para $stateCode — conecte a API real)'];
   final q = query.toLowerCase();
   return list.where((c) => c.toLowerCase().contains(q)).take(8).toList();
+}
+
+Future<LocaisSalvos?> buscarDadosPorNome({
+  required String cidade,
+  required String estado,
+}) async {
+  try {
+    // 1. NOMINATIM → pegar lat/lon
+    final urlGeo = Uri.parse(
+      "https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent("$cidade $estado Brasil")}&format=json&limit=1",
+    );
+
+    final geoResponse = await http.get(
+      urlGeo,
+      headers: {
+        'User-Agent': 'climtech-app/1.0 (seuemail@email.com)',
+        'Accept-Language': 'pt-BR',
+      },
+    );
+
+    if (geoResponse.statusCode != 200) return null;
+
+    final geoData = jsonDecode(geoResponse.body);
+
+    if (geoData.isEmpty) return null;
+
+    final geo = geoData[0];
+
+    final lat = double.parse(geo['lat']);
+    final lon = double.parse(geo['lon']);
+
+    // 2. OPEN-METEO → clima atual
+    final urlWeather = Uri.parse(
+      "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true",
+    );
+
+    final weatherResponse = await http.get(urlWeather);
+
+    if (weatherResponse.statusCode != 200) return null;
+
+    final weatherData = jsonDecode(weatherResponse.body);
+
+    final current = weatherData['current_weather'];
+
+    final temperatura = current['temperature'].round();
+    final weatherCode = current['weathercode'];
+
+    // 3. RETORNA MODEL PRONTO
+    return LocaisSalvos(
+      cidade: cidade,
+      estado: estado,
+      temperaturaAtual: temperatura,
+      climaAtual: weatherCode,
+    );
+  } catch (e) {
+    print('Erro: $e');
+    return null;
+  }
 }

@@ -3,6 +3,7 @@ import 'package:climtech/routing/route.dart';
 import 'package:climtech/ui/confg/view_models/tema_viewmodel.dart';
 import 'package:climtech/ui/core/theme.dart';
 import 'package:climtech/ui/home/view_models/home_viewmodel.dart';
+import 'package:climtech/ui/select_location/view_models/locations_saves_viewmodel.dart';
 import 'package:climtech/ui/select_location/view_models/select_location_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,7 @@ void main() async {
         ),
         ChangeNotifierProvider(create: (_) => HomeViewmodel()),
         ChangeNotifierProvider(create: (_) => SelectLocationViewmodel()),
+        ChangeNotifierProvider(create: (_) => LocationsSavesViewmodel()),
       ],
       child: const MyApp(),
     ),

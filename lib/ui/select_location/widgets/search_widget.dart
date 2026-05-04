@@ -23,7 +23,7 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
       children: [
         _EstadoCombobox(),
         const SizedBox(height: 12),
-        _CidadeCombobox(),
+        _CidadeWidget(),
       ],
     );
   }
@@ -32,7 +32,6 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
 // ─────────────────────────────────────────────────────────────────────────────
 // ESTADO COMBOBOX
 // ─────────────────────────────────────────────────────────────────────────────
-
 class _EstadoCombobox extends StatefulWidget {
   @override
   State<_EstadoCombobox> createState() => _EstadoComboboxState();
@@ -93,17 +92,13 @@ class _EstadoComboboxState extends State<_EstadoCombobox> {
   }
 
   OverlayEntry _buildOverlayEntry() {
-    // 📐 LARGURA DO DROPDOWN — lemos a largura real do input via RenderBox
-    // para que o painel de opções tenha exatamente o mesmo tamanho do campo.
-    // Esse é o único lugar onde o tamanho do dropdown é definido.
-    // Para uma largura fixa, substitua `inputWidth` por um valor fixo, ex: 300.0
+    // aqui é definido a largura do combobox
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final double inputWidth = renderBox.size.width; // 📐 LARGURA: altere aqui
 
     return OverlayEntry(
       builder: (_) => _DropdownOverlay<BrazilianState>(
         layerLink: _layerLink,
-        // 📐 A largura calculada acima é repassada ao overlay
         width: inputWidth,
         suggestionsBuilder: () =>
             context.read<SelectLocationViewmodel>().stateSuggestions,
@@ -137,101 +132,43 @@ class _EstadoComboboxState extends State<_EstadoCombobox> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CIDADE COMBOBOX
+// CIDADE
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _CidadeCombobox extends StatefulWidget {
+class _CidadeWidget extends StatefulWidget {
+  const _CidadeWidget();
+
   @override
-  State<_CidadeCombobox> createState() => _CidadeComboboxState();
+  State<_CidadeWidget> createState() => _CidadeWidgetState();
 }
 
-class _CidadeComboboxState extends State<_CidadeCombobox> {
+class _CidadeWidgetState extends State<_CidadeWidget> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
-  final _layerLink = LayerLink();
 
-  OverlayEntry? _overlayEntry;
-  bool _showOverlay = false;
   bool _suppressListener = false;
   BrazilianState? _lastState;
+
+  SelectLocationViewmodel get _vm => context.read<SelectLocationViewmodel>();
 
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(_onFocusChange);
     _controller.addListener(_onTextChanged);
-  }
-
-  SelectLocationViewmodel get _vm => context.read<SelectLocationViewmodel>();
-
-  void _onFocusChange() {
-    if (!_focusNode.hasFocus) _hideOverlay();
   }
 
   void _onTextChanged() {
     if (_suppressListener) return;
     if (!_vm.cityEnabled) return;
-    if (_controller.text.isEmpty) {
+
+    final text = _controller.text;
+
+    if (text.isEmpty) {
       _vm.clearCity();
-      _hideOverlay();
       return;
     }
-    _vm.onCityQueryChanged(_controller.text);
-    _showOverlayIfNeeded();
-  }
 
-  void _showOverlayIfNeeded() {
-    if (_overlayEntry != null) {
-      _overlayEntry!.markNeedsBuild();
-      return;
-    }
-    _overlayEntry = _buildOverlayEntry();
-    Overlay.of(context).insert(_overlayEntry!);
-    setState(() => _showOverlay = true);
-  }
-
-  void _hideOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-    if (_showOverlay) setState(() => _showOverlay = false);
-  }
-
-  void _onSelect(String city) {
-    _suppressListener = true;
-    _controller.text = city;
-    _suppressListener = false;
-    _vm.selectCity(city);
-    _hideOverlay();
-    _focusNode.unfocus();
-  }
-
-  OverlayEntry _buildOverlayEntry() {
-    // 📐 LARGURA DO DROPDOWN — mesmo princípio do _EstadoCombobox acima
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final double inputWidth = renderBox.size.width; // 📐 LARGURA: altere aqui
-
-    return OverlayEntry(
-      builder: (_) {
-        final vm = context.read<SelectLocationViewmodel>();
-        return _DropdownOverlay<String>(
-          layerLink: _layerLink,
-          // 📐 A largura calculada acima é repassada ao overlay
-          width: inputWidth,
-          loading: vm.cityLoading,
-          suggestionsBuilder: () => vm.citySuggestions,
-          itemBuilder: (c) => _CityTile(city: c, onTap: () => _onSelect(c)),
-          onTapOutside: _hideOverlay,
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _hideOverlay();
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
+    _vm.onCityQueryChanged(text);
   }
 
   @override
@@ -239,6 +176,7 @@ class _CidadeComboboxState extends State<_CidadeCombobox> {
     final vm = context.watch<SelectLocationViewmodel>();
     final enabled = vm.cityEnabled;
 
+    // limpa input quando troca estado
     if (_lastState != vm.selectedState) {
       _lastState = vm.selectedState;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -246,26 +184,30 @@ class _CidadeComboboxState extends State<_CidadeCombobox> {
         _suppressListener = true;
         _controller.clear();
         _suppressListener = false;
-        _hideOverlay();
       });
     }
 
-    if (_overlayEntry != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _overlayEntry?.markNeedsBuild();
-      });
+    // atualiza input quando seleciona cidade
+    final selectedCity = vm.selectedCity;
+    if (selectedCity != null && _controller.text != selectedCity) {
+      _suppressListener = true;
+      _controller.text = selectedCity;
+      _suppressListener = false;
     }
 
-    return CompositedTransformTarget(
-      link: _layerLink,
-      child: _SearchField(
-        controller: _controller,
-        focusNode: _focusNode,
-        hint: enabled ? 'Cidade' : 'Selecione um estado primeiro',
-        enabled: enabled,
-        active: _showOverlay,
-      ),
+    return _SearchField(
+      controller: _controller,
+      focusNode: _focusNode,
+      hint: enabled ? 'Cidade' : 'Selecione um estado primeiro',
+      enabled: enabled,
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 }
 
@@ -280,8 +222,6 @@ class _DropdownOverlay<T> extends StatelessWidget {
   final VoidCallback onTapOutside;
   final bool loading;
 
-  // 📐 LARGURA: recebida de quem cria o overlay (RenderBox do input)
-  // Para largura fixa, passe um valor constante, ex: width: 300
   final double width;
 
   const _DropdownOverlay({
@@ -289,7 +229,7 @@ class _DropdownOverlay<T> extends StatelessWidget {
     required this.suggestionsBuilder,
     required this.itemBuilder,
     required this.onTapOutside,
-    required this.width, // 📐 LARGURA: parâmetro obrigatório
+    required this.width,
     this.loading = false,
   });
 
@@ -311,8 +251,6 @@ class _DropdownOverlay<T> extends StatelessWidget {
             child: Material(
               color: Colors.transparent,
               child: SizedBox(
-                // 📐 LARGURA APLICADA: é aqui que o tamanho é de fato imposto
-                // ao painel do dropdown. Altere `width` acima para mudar.
                 width: width,
                 child: Container(
                   decoration: BoxDecoration(
@@ -355,7 +293,7 @@ class _DropdownOverlay<T> extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SEARCH FIELD
+// input
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _SearchField extends StatelessWidget {
@@ -411,7 +349,7 @@ class _SearchField extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TILES
+// opções do combobox do estado
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _StateTile extends StatelessWidget {
@@ -427,31 +365,6 @@ class _StateTile extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         child: Row(children: [Text(state.name, style: estiloTexto(15))]),
-      ),
-    );
-  }
-}
-
-class _CityTile extends StatelessWidget {
-  final String city;
-  final VoidCallback onTap;
-
-  const _CityTile({required this.city, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final tema = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        child: Row(
-          children: [
-            Icon(Icons.location_on_outlined, color: tema.primary, size: 16),
-            const SizedBox(width: 10),
-            Expanded(child: Text(city, style: estiloTexto(15))),
-          ],
-        ),
       ),
     );
   }

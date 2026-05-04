@@ -3,7 +3,7 @@ import 'package:climtech/domain/models/temperatura_model.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-import '../../../domain/models/local_model.dart';
+import '../../../domain/models/local_model_modal.dart';
 
 class HomeViewmodel extends ChangeNotifier {
   // exibe a tela de carregamento

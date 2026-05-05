@@ -8,8 +8,14 @@ import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../domain/models/locais_salvos_model.dart';
+import '../../core/build_app_estruture.dart';
 
-Widget cardSalvos(ColorScheme tema, LocaisSalvos prov) {
+Widget cardSalvos(
+  ColorScheme tema,
+  LocaisSalvos local,
+  LocationsSavesViewmodel prov,
+  int index,
+) {
   return Container(
     margin: EdgeInsets.only(top: 1.h),
     decoration: BoxDecoration(
@@ -17,17 +23,21 @@ Widget cardSalvos(ColorScheme tema, LocaisSalvos prov) {
       borderRadius: BorderRadius.circular(20),
     ),
     child: ListTile(
-      leading: Iconify(AppIcons.pin, size: 20.sp),
-      title: Text('${prov.cidade} - ${prov.estado}', style: estiloTexto(15)),
-      subtitle: Text('${prov.temperaturaAtual}°', style: estiloTexto(13)),
+      leading: IconButton(
+        icon: Iconify(AppIcons.pin, size: 20.sp, color: tema.onSurface),
+        onPressed: () => prov.removerLocal(index),
+      ),
+      title: Text('${local.cidade} - ${local.estado}', style: estiloTexto(15)),
+      subtitle: Text('${local.temperaturaAtual}°', style: estiloTexto(13)),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Iconify(
-            descobrirIcone(DateTime.now().hour, prov.climaAtual),
+            descobrirIcone(DateTime.now().hour, local.probabilidadeDeChuva),
             size: 20.sp,
+            color: tema.onSurface,
           ),
-          Text('${prov.climaAtual}%', style: estiloTexto(15)),
+          Text('${local.probabilidadeDeChuva}%', style: estiloTexto(15)),
         ],
       ),
     ),
@@ -39,6 +49,7 @@ Widget cardResultados(
   String cidade,
   SelectLocationViewmodel slProv,
   LocationsSavesViewmodel scProv,
+  BuildContext ctx,
 ) {
   return Container(
     margin: EdgeInsets.only(top: 1.h),
@@ -47,14 +58,23 @@ Widget cardResultados(
       borderRadius: BorderRadius.circular(20),
     ),
     child: ListTile(
-      leading: Iconify(AppIcons.local, size: 20.sp),
+      leading: Iconify(AppIcons.local, size: 20.sp, color: tema.onSurface),
       title: Text(cidade, style: estiloTexto(15)),
       trailing: IconButton(
-        icon: Iconify(AppIcons.pin, size: 20.sp),
+        icon: Iconify(AppIcons.pin, size: 20.sp, color: tema.onSurface),
         onPressed: () =>
             scProv.adicionarLocal(cidade, slProv.selectedState!.name),
       ),
-      onTap: () => slProv.selectCity(cidade),
+      onTap: () {
+        slProv.selectCity(cidade);
+        Navigator.of(ctx).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) =>
+                BuildAppEstruture(initialIndex: 1, iniciarProviders: false),
+          ),
+          (route) => false,
+        );
+      },
     ),
   );
 }

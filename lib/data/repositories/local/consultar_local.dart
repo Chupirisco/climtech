@@ -1,7 +1,10 @@
 // https://api.open-meteo.com/v1/forecast?latitude=-8.76&longitude=-63.90&daily=temperature_2m_max,temperature_2m_min&hourly=temperature_2m,precipitation_probability&forecast_days=14&timezone=auto request example
 
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
+import 'package:climtech/data/services/stored_location.dart';
 import 'package:climtech/domain/models/temperatura_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,7 +19,7 @@ Future<LocalModel> buscarDados({
     final localInfo = await obterCidadeEstado(lat, lon);
 
     final url = Uri.parse(
-      'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&hourly=temperature_2m,precipitation_probability&forecast_days=14&timezone=auto&model=ecmwf',
+      'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&hourly=temperature_2m,precipitation_probability&forecast_days=14&timezone=auto',
     );
 
     final resposta = await http.get(url);
@@ -88,7 +91,7 @@ Future<List<String>> fetchCities(String stateCode, String query) async {
   // Simula latência de rede
   await Future.delayed(const Duration(milliseconds: 600));
 
-  // TODO: substituir pelo endpoint real, ex.:
+  //  substituir pelo endpoint real, ex.:
   //   https://servicodados.ibge.gov.br/api/v1/localidades/estados/$stateCode/municipios
   // e filtrar pelo query no retorno.
 
@@ -163,9 +166,8 @@ Future<LocaisSalvos?> buscarDadosPorNome({
     final lat = double.parse(geo['lat']);
     final lon = double.parse(geo['lon']);
 
-    // 2. OPEN-METEO → clima atual
     final urlWeather = Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true",
+      "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&hourly=precipitation_probability&timezone=auto",
     );
 
     final weatherResponse = await http.get(urlWeather);
@@ -175,19 +177,99 @@ Future<LocaisSalvos?> buscarDadosPorNome({
     final weatherData = jsonDecode(weatherResponse.body);
 
     final current = weatherData['current_weather'];
+    final hourly = weatherData['hourly'];
 
     final temperatura = current['temperature'].round();
-    final weatherCode = current['weathercode'];
 
-    // 3. RETORNA MODEL PRONTO
+    final now = DateTime.now();
+
+    // listas
+    final List times = hourly['time'];
+    final List probs = hourly['precipitation_probability'];
+
+    // 🔥 encontrar índice correto
+    int indexAtual = times.indexWhere((t) {
+      final time = DateTime.parse(t);
+      return time.year == now.year &&
+          time.month == now.month &&
+          time.day == now.day &&
+          time.hour == now.hour;
+    });
+
+    // fallback seguro
+    if (indexAtual == -1) {
+      indexAtual = 0;
+    }
+
+    final probAgora = probs[indexAtual];
+
+    final saves = StoredLocation();
+    await saves.addLocation(lat, lon);
+
     return LocaisSalvos(
       cidade: cidade,
       estado: estado,
       temperaturaAtual: temperatura,
-      climaAtual: weatherCode,
+      probabilidadeDeChuva: probAgora,
     );
   } catch (e) {
     print('Erro: $e');
+    return null;
+  }
+}
+
+Future<LocaisSalvos?> buscarFavoritos({
+  required double lat,
+  required double lon,
+}) async {
+  try {
+    final localInfo = await obterCidadeEstado(lat, lon);
+
+    final url = Uri.parse(
+      'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&hourly=temperature_2m,precipitation_probability&current_weather=true&forecast_days=14&timezone=auto',
+    );
+
+    final weatherResponse = await http.get(url);
+
+    if (weatherResponse.statusCode != 200) return null;
+
+    final weatherData = jsonDecode(weatherResponse.body);
+
+    final current = weatherData['current_weather'];
+    final hourly = weatherData['hourly'];
+
+    final temperatura = current['temperature'].round();
+
+    final now = DateTime.now();
+
+    // listas
+    final List times = hourly['time'];
+    final List probs = hourly['precipitation_probability'];
+
+    // 🔥 encontrar índice correto
+    int indexAtual = times.indexWhere((t) {
+      final time = DateTime.parse(t);
+      return time.year == now.year &&
+          time.month == now.month &&
+          time.day == now.day &&
+          time.hour == now.hour;
+    });
+
+    // fallback seguro
+    if (indexAtual == -1) {
+      indexAtual = 0;
+    }
+
+    final probAgora = probs[indexAtual];
+    return LocaisSalvos(
+      cidade: localInfo['cidade']!,
+      estado: localInfo['estado']!,
+      temperaturaAtual: temperatura,
+      probabilidadeDeChuva: probAgora,
+    );
+  } catch (e) {
+    print('Erro geral: $e');
+
     return null;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:climtech/ui/confg/widgets/config_screen.dart';
 import 'package:climtech/ui/home/widgets/home_screen.dart';
+import 'package:climtech/ui/select_location/view_models/locations_saves_viewmodel.dart';
 import 'package:climtech/ui/select_location/widgets/select_location_screen.dart';
 import 'package:climtech/utils/icons.dart';
 import 'package:flutter/material.dart';
@@ -9,25 +10,35 @@ import 'package:provider/provider.dart';
 import '../home/view_models/home_viewmodel.dart';
 
 class BuildAppEstruture extends StatefulWidget {
-  const BuildAppEstruture({super.key});
+  final int initialIndex;
+  final bool iniciarProviders;
+
+  const BuildAppEstruture({
+    super.key,
+    this.initialIndex = 1,
+    this.iniciarProviders = true,
+  });
 
   @override
   State<BuildAppEstruture> createState() => _BuildAppEstrutureState();
 }
 
 class _BuildAppEstrutureState extends State<BuildAppEstruture> {
-  int indiceSelecionado = 1;
+  late int indiceSelecionado;
 
-  // init state para carregar tudo o que tem de carregar, menos o tema
   @override
   void initState() {
     super.initState();
 
+    indiceSelecionado = widget.initialIndex;
+
     Future.microtask(() {
-      if (!mounted) {
-        return;
-      }
-      context.read<HomeViewmodel>().carregarDadosLocalAtual(DateTime.now());
+      if (!mounted) return;
+
+      if (widget.iniciarProviders) {
+        context.read<HomeViewmodel>().carregarDadosLocalAtual(DateTime.now());
+        context.read<LocationsSavesViewmodel>().carregarLocaisSalvos();
+      } else {}
     });
   }
 

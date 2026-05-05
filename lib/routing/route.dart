@@ -3,6 +3,6 @@ import 'package:flutter/material.dart';
 
 class AppRoute {
   static Map<String, WidgetBuilder> rotas() {
-    return {'/': (context) => BuildAppEstruture()};
+    return {'/': (context) => BuildAppEstruture(initialIndex: 1)};
   }
 }

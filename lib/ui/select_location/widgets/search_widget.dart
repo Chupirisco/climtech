@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:climtech/utils/estilos_pradroes.dart';
 import 'package:climtech/utils/icons.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +96,7 @@ class _EstadoComboboxState extends State<_EstadoCombobox> {
   OverlayEntry _buildOverlayEntry() {
     // aqui é definido a largura do combobox
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final double inputWidth = renderBox.size.width; // 📐 LARGURA: altere aqui
+    final double inputWidth = renderBox.size.width; // LARGURA: altere aqui
 
     return OverlayEntry(
       builder: (_) => _DropdownOverlay<BrazilianState>(
@@ -272,15 +274,18 @@ class _DropdownOverlay<T> extends StatelessWidget {
                             ),
                           ),
                         )
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            for (int i = 0; i < suggestions.length; i++) ...[
-                              itemBuilder(suggestions[i]),
-                              if (i < suggestions.length - 1)
-                                Divider(height: 1, color: tema.primary),
+                      : BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              for (int i = 0; i < suggestions.length; i++) ...[
+                                itemBuilder(suggestions[i]),
+                                if (i < suggestions.length - 1)
+                                  Divider(height: 1, color: tema.primary),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                 ),
               ),
@@ -324,7 +329,7 @@ class _SearchField extends StatelessWidget {
       child: Row(
         children: [
           const SizedBox(width: 14),
-          Iconify(AppIcons.lupa, color: tema.primary, size: 20.sp),
+          Iconify(AppIcons.lupa, color: tema.onSurface, size: 20.sp),
           const SizedBox(width: 10),
           Expanded(
             child: TextField(
@@ -360,9 +365,11 @@ class _StateTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tema = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
-      child: Padding(
+      child: Container(
+        color: tema.onSecondary,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         child: Row(children: [Text(state.name, style: estiloTexto(15))]),
       ),

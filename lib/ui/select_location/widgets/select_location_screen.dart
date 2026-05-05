@@ -37,14 +37,35 @@ class SelectLocationScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text('Salvos', style: estiloTexto(15)),
-                      ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: scProv.locaisSalvos.length,
-                        itemBuilder: (context, index) {
-                          return cardSalvos(tema, scProv.locaisSalvos[index]);
-                        },
-                      ),
+                      scProv.locaisSalvos.isEmpty
+                          ? Container(
+                              width: double.infinity,
+                              height: 8.h,
+                              margin: EdgeInsets.only(top: 1.h),
+                              decoration: BoxDecoration(
+                                color: tema.onPrimary,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Nenhum local salvo!',
+                                  style: estiloTexto(15),
+                                ),
+                              ),
+                            )
+                          : ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: scProv.locaisSalvos.length,
+                              itemBuilder: (context, index) {
+                                return cardSalvos(
+                                  tema,
+                                  scProv.locaisSalvos[index],
+                                  scProv,
+                                  index,
+                                );
+                              },
+                            ),
                     ],
                   )
                 : Column(
@@ -62,6 +83,7 @@ class SelectLocationScreen extends StatelessWidget {
                             slProv.citySuggestions[index],
                             slProv,
                             scProv,
+                            context,
                           );
                         },
                       ),

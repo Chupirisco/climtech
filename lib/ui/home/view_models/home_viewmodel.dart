@@ -100,6 +100,7 @@ class HomeViewmodel extends ChangeNotifier {
       listaCompleta.latitude = posicao.latitude;
       listaCompleta.longitude = posicao.longitude;
     } catch (e) {
+      // ignore: avoid_print
       return print(e.toString());
     }
   }

@@ -14,7 +14,6 @@ class SelectLocationViewmodel extends ChangeNotifier {
   String? get selectedCity => _selectedCity;
 
   // ─── Estados brasileiros ───────────────────────────────────────────────────
-
   static const List<BrazilianState> allStates = [
     BrazilianState(name: 'Acre', code: 'AC'),
     BrazilianState(name: 'Alagoas', code: 'AL'),

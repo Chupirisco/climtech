@@ -74,6 +74,7 @@ Widget cardResultados(
           ),
           (route) => false,
         );
+        slProv.reset();
       },
     ),
   );

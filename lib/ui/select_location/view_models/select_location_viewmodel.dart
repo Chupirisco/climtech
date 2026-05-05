@@ -157,7 +157,6 @@ class SelectLocationViewmodel extends ChangeNotifier {
   void reset() {
     _cityDebounce?.cancel();
     _selectedState = null;
-    _selectedCity = null;
     _stateSuggestions = [];
     _citySuggestions = [];
     _cityLoading = false;

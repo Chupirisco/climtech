@@ -189,14 +189,6 @@ class _CidadeWidgetState extends State<_CidadeWidget> {
       });
     }
 
-    // atualiza input quando seleciona cidade
-    final selectedCity = vm.selectedCity;
-    if (selectedCity != null && _controller.text != selectedCity) {
-      _suppressListener = true;
-      _controller.text = selectedCity;
-      _suppressListener = false;
-    }
-
     return _SearchField(
       controller: _controller,
       focusNode: _focusNode,

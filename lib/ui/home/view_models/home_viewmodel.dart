@@ -143,4 +143,22 @@ class HomeViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> muldarLocal(String cidade, String estado) async {
+    isLoading = true;
+
+    notifyListeners();
+
+    try {
+      listaCompleta = await buscarDadosPorNomeCompleto(
+        cidade: cidade,
+        estado: estado,
+      );
+      filtarDia(DateTime.now());
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+    return;
+  }
 }

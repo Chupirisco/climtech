@@ -15,6 +15,8 @@ Widget cardSalvos(
   LocaisSalvos local,
   LocationsSavesViewmodel prov,
   int index,
+  SelectLocationViewmodel slProv,
+  BuildContext ctx,
 ) {
   return Container(
     margin: EdgeInsets.only(top: 1.h),
@@ -40,6 +42,16 @@ Widget cardSalvos(
           Text('${local.probabilidadeDeChuva}%', style: estiloTexto(15)),
         ],
       ),
+      onTap: () {
+        slProv.selectCity(local.cidade, local.estado);
+        Navigator.of(ctx).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) =>
+                BuildAppEstruture(initialIndex: 1, iniciarProviders: false),
+          ),
+          (route) => false,
+        );
+      },
     ),
   );
 }
@@ -62,11 +74,14 @@ Widget cardResultados(
       title: Text(cidade, style: estiloTexto(15)),
       trailing: IconButton(
         icon: Iconify(AppIcons.pin, size: 20.sp, color: tema.onSurface),
-        onPressed: () =>
-            scProv.adicionarLocal(cidade, slProv.selectedState!.name),
+        onPressed: () => scProv.adicionarLocal(
+          cidade,
+          slProv.selectedState!.name,
+          slProv.selectedState!.code,
+        ),
       ),
       onTap: () {
-        slProv.selectCity(cidade);
+        slProv.selectCity(cidade, slProv.selectedState!.name);
         Navigator.of(ctx).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) =>

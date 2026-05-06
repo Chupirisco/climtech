@@ -9,12 +9,14 @@ class LocationsSavesViewmodel extends ChangeNotifier {
 
   final _saves = StoredLocation();
 
-  void adicionarLocal(String cidade, String estado) async {
+  void adicionarLocal(String cidade, String estado, String sigla) async {
     final result = await buscarDadosPorNome(cidade: cidade, estado: estado);
 
     if (result == null) {
       return;
     }
+
+    result.estado = sigla;
 
     locaisSalvos.add(result);
 

@@ -9,9 +9,12 @@ class SelectLocationViewmodel extends ChangeNotifier {
   // ─── Seleções finais ───────────────────────────────────────────────────────
   BrazilianState? _selectedState;
   String? _selectedCity;
+  String? _nomeEstadoSelecionado;
 
   BrazilianState? get selectedState => _selectedState;
+
   String? get selectedCity => _selectedCity;
+  String? get nomeEstadoSelecionado => _nomeEstadoSelecionado;
 
   // ─── Estados brasileiros ───────────────────────────────────────────────────
   static const List<BrazilianState> allStates = [
@@ -139,8 +142,9 @@ class SelectLocationViewmodel extends ChangeNotifier {
   }
 
   // Confirma a seleção de uma cidade.
-  void selectCity(String city) {
+  void selectCity(String city, String estado) {
     _selectedCity = city;
+    _nomeEstadoSelecionado = estado;
     _citySuggestions = [];
     notifyListeners();
   }
@@ -161,12 +165,6 @@ class SelectLocationViewmodel extends ChangeNotifier {
     _citySuggestions = [];
     _cityLoading = false;
     notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    _cityDebounce?.cancel();
-    super.dispose();
   }
 }
 

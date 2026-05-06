@@ -8,6 +8,7 @@ import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../home/view_models/home_viewmodel.dart';
+import '../select_location/view_models/select_location_viewmodel.dart';
 
 class BuildAppEstruture extends StatefulWidget {
   final int initialIndex;
@@ -38,7 +39,13 @@ class _BuildAppEstrutureState extends State<BuildAppEstruture> {
       if (widget.iniciarProviders) {
         context.read<HomeViewmodel>().carregarDadosLocalAtual(DateTime.now());
         context.read<LocationsSavesViewmodel>().carregarLocaisSalvos();
-      } else {}
+      } else {
+        final prov = context.read<SelectLocationViewmodel>();
+        context.read<HomeViewmodel>().muldarLocal(
+          prov.selectedCity!,
+          prov.nomeEstadoSelecionado!,
+        );
+      }
     });
   }
 

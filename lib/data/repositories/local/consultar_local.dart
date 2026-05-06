@@ -187,7 +187,7 @@ Future<LocaisSalvos?> buscarDadosPorNome({
     final List times = hourly['time'];
     final List probs = hourly['precipitation_probability'];
 
-    // 🔥 encontrar índice correto
+    // encontrar índice correto
     int indexAtual = times.indexWhere((t) {
       final time = DateTime.parse(t);
       return time.year == now.year &&
@@ -271,5 +271,64 @@ Future<LocaisSalvos?> buscarFavoritos({
     print('Erro geral: $e');
 
     return null;
+  }
+}
+
+Future<LocalModel> buscarDadosPorNomeCompleto({
+  required String cidade,
+  required String estado,
+}) async {
+  try {
+    // 1. NOMINATIM → pegar lat/lon
+    final urlGeo = Uri.parse(
+      "https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent("$cidade $estado Brasil")}&format=json&limit=1",
+    );
+
+    final geoResponse = await http.get(
+      urlGeo,
+      headers: {
+        'User-Agent': 'climtech-app/1.0 (seuemail@email.com)',
+        'Accept-Language': 'pt-BR',
+      },
+    );
+
+    if (geoResponse.statusCode != 200) {
+      return LocalModel(temperaturaModel: TemperaturaModel(hourly: []));
+    }
+
+    final geoData = jsonDecode(geoResponse.body);
+
+    if (geoData.isEmpty) {
+      return LocalModel(temperaturaModel: TemperaturaModel(hourly: []));
+    }
+
+    final geo = geoData[0];
+
+    final lat = double.parse(geo['lat']);
+    final lon = double.parse(geo['lon']);
+
+    final url = Uri.parse(
+      'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&hourly=temperature_2m,precipitation_probability&forecast_days=14&timezone=auto',
+    );
+    final resposta = await http.get(url);
+
+    if (resposta.statusCode != 200) {
+      throw Exception('Erro ao buscar clima');
+    }
+
+    final body = jsonDecode(resposta.body)['hourly'];
+
+    final temperaturaModel = TemperaturaModel.fromJson(body, lat, lon);
+
+    return LocalModel(
+      cidade: cidade,
+      siglaEstado: estado,
+      latitude: lat,
+      longitude: lon,
+      temperaturaModel: temperaturaModel,
+    );
+  } catch (e) {
+    print('Erro: $e');
+    return LocalModel(temperaturaModel: TemperaturaModel(hourly: []));
   }
 }

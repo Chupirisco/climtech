@@ -31,6 +31,7 @@ class StoredLocation {
 
   // Remover
   Future<void> removeLocation(int index) async {
+    await loadLocations();
     _savedLocations.removeAt(index);
     await _saveToStorage();
   }

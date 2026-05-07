@@ -1,17 +1,77 @@
-# climtech
+# ClimTech ☁️
 
-A new Flutter project.
+O **ClimTech** é um aplicativo de previsão do tempo desenvolvido em Flutter com foco em unir **meteorologia e design moderno** em uma experiência simples, leve e agradável de usar.
 
-## Getting Started
+O projeto foi criado com a proposta de exibir informações climáticas de forma prática, utilizando a localização atual do dispositivo ou permitindo que o usuário pesquise cidades brasileiras manualmente. A ideia principal sempre foi transformar dados meteorológicos em algo visualmente bonito, intuitivo e fácil de entender.
 
-This project is a starting point for a Flutter application.
+## ✨ Principais funcionalidades
 
-A few resources to get you started if this is your first Flutter project:
+* Clima atual em tempo real
+* Previsão do tempo para até 14 dias
+* Probabilidade de chuva
+* Geolocalização automática
+* Busca manual de cidades do Brasil
+* Sistema de favoritos
+* Tema claro e escuro
+* Interface moderna inspirada no estilo iOS
+* Widgets com efeito visual semelhante a “liquid glass”
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## 🎨 Design
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Um dos principais focos do ClimTech é a interface.
+
+O app utiliza um visual clean e moderno, trabalhando principalmente com tons brancos e pretos suavizados para criar uma aparência elegante e confortável visualmente. Os widgets possuem fundos translúcidos inspirados no conceito de *liquid glass*, trazendo uma identidade própria para o projeto.
+
+A experiência foi pensada para ser simples, organizada e agradável tanto no tema claro quanto no escuro.
+
+## 🇧🇷 Foco no Brasil
+
+O ClimTech foi desenvolvido com foco principal no Brasil.
+
+A busca de cidades funciona utilizando dados do IBGE, permitindo encontrar municípios brasileiros de forma rápida e gratuita. Apesar disso, a geolocalização automática pode funcionar em outros países, já que os dados climáticos são obtidos através de APIs globais.
+
+## 📡 APIs e tecnologias utilizadas
+
+### Desenvolvimento
+
+* Dart
+* Flutter
+* Arquitetura MVVM
+* Provider
+
+### APIs
+
+* Open-Meteo → previsão do tempo
+* Nominatim → geolocalização e busca de coordenadas
+* IBGE → pesquisa de cidades brasileiras
+
+### Bibliotecas
+
+* Geolocator
+* Iconify
+* Outras bibliotecas da comunidade Flutter
+
+### UI
+
+* Fonte Poppins
+* Temas personalizados
+* Interface responsiva e minimalista
+
+## 📌 Precisão dos dados
+
+O aplicativo utiliza dados meteorológicos fornecidos pela Open-Meteo, que trabalha com estações meteorológicas internacionais. Mesmo não sendo uma solução profissional paga, os resultados costumam apresentar uma margem de diferença pequena, geralmente entre **0° e 2°** em comparação com a temperatura real.
+
+A proposta do projeto é oferecer uma solução bonita, funcional e acessível utilizando apenas ferramentas gratuitas.
+
+## 🚧 Futuras melhorias
+
+Algumas funcionalidades planejadas para versões futuras incluem:
+
+* Novos widgets climáticos
+* Exibição de temperaturas máximas e mínimas
+* Avisos e informações meteorológicas adicionais
+* Melhorias visuais e de usabilidade
+
+## 💡 Objetivo do projeto
+
+Além de ser um aplicativo funcional, o ClimTech também foi desenvolvido como um projeto de portfólio e aprendizado, mostrando como é possível criar uma aplicação moderna de meteorologia utilizando Flutter, APIs gratuitas e um cuidado especial com design e experiência do usuário.

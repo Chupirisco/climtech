@@ -7,6 +7,7 @@ import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../domain/models/estados_brasileiros_model.dart';
 import '../view_models/select_location_viewmodel.dart';
 
 class LocationSearchWidget extends StatefulWidget {
@@ -84,7 +85,7 @@ class _EstadoComboboxState extends State<_EstadoCombobox> {
     if (_showOverlay) setState(() => _showOverlay = false);
   }
 
-  void _onSelect(BrazilianState state) {
+  Future<void> _onSelect(BrazilianState state) async {
     _suppressListener = true;
     _controller.text = state.name;
     _suppressListener = false;

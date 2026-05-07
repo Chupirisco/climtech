@@ -16,12 +16,6 @@ class SelectLocationScreen extends StatefulWidget {
 
 class _SelectLocationScreenState extends State<SelectLocationScreen> {
   @override
-  void deactivate() {
-    Provider.of<SelectLocationViewmodel>(context, listen: false).reset();
-    super.deactivate();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final slProv = Provider.of<SelectLocationViewmodel>(context);
     final scProv = Provider.of<LocationsSavesViewmodel>(context);
@@ -30,7 +24,6 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
     return Padding(
       padding: margem(),
       child: Column(
-        // ← sem SingleChildScrollView na raiz
         children: [
           SizedBox(height: 5.h),
 

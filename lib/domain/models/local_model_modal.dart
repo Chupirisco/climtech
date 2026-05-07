@@ -23,9 +23,6 @@ class CidadeModel {
 
   CidadeModel({required this.nome, required this.uf});
 
-  /// Exibe como "Ouro Preto - MG"
-  String get nomeCompleto => '$nome - $uf';
-
   factory CidadeModel.fromJson(Map<String, dynamic> json) {
     return CidadeModel(
       nome: json['nome'],

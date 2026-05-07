@@ -1,4 +1,5 @@
 import 'package:climtech/ui/home/widgets/modal_calendario.dart';
+import 'package:climtech/ui/select_location/view_models/select_location_viewmodel.dart';
 import 'package:climtech/utils/texto_formatado.dart';
 import 'package:climtech/utils/descobrir_icone.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -21,6 +22,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final itemScrollController = ItemScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      if (!mounted) return;
+
+      context.read<SelectLocationViewmodel>().reset();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final tema = Theme.of(context).colorScheme;

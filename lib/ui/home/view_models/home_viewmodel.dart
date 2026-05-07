@@ -1,8 +1,10 @@
 import 'package:climtech/data/repositories/local/consultar_local.dart';
 import 'package:climtech/domain/models/temperatura_model.dart';
+import 'package:climtech/ui/select_location/view_models/select_location_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../domain/models/estados_brasileiros_model.dart';
 import '../../../domain/models/local_model_modal.dart';
 
 class HomeViewmodel extends ChangeNotifier {
@@ -144,7 +146,7 @@ class HomeViewmodel extends ChangeNotifier {
     }
   }
 
-  Future<void> muldarLocal(String cidade, String estado) async {
+  Future<void> muldarLocal(String cidade, BrazilianState estado) async {
     isLoading = true;
 
     notifyListeners();
@@ -152,8 +154,10 @@ class HomeViewmodel extends ChangeNotifier {
     try {
       listaCompleta = await buscarDadosPorNomeCompleto(
         cidade: cidade,
-        estado: estado,
+        estado: estado.name,
       );
+
+      listaCompleta.siglaEstado = estado.code;
       filtarDia(DateTime.now());
     } finally {
       isLoading = false;

@@ -1,6 +1,5 @@
 import 'package:climtech/data/repositories/local/consultar_local.dart';
 import 'package:climtech/domain/models/temperatura_model.dart';
-import 'package:climtech/ui/select_location/view_models/select_location_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 

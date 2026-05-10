@@ -24,6 +24,10 @@ O app utiliza um visual clean e moderno, trabalhando principalmente com tons bra
 
 A experiência foi pensada para ser simples, organizada e agradável tanto no tema claro quanto no escuro.
 
+[Protótipo no Figma](https://www.figma.com/design/SQiS0hzKZ9o0EIiSOq01aF/app-clima?node-id=54-870&t=RzEw6KqIhyNOfgug-1)
+
+[Apresentação do Projeto](https://www.figma.com/proto/SQiS0hzKZ9o0EIiSOq01aF/app-clima?page-id=0%3A1&node-id=6-86&p=f&viewport=1075%2C307%2C0.2&t=dqg5gtIGMf5T6sX7-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=6%3A86)
+
 ## 🇧🇷 Foco no Brasil
 
 O ClimTech foi desenvolvido com foco principal no Brasil.
@@ -75,9 +79,3 @@ Algumas funcionalidades planejadas para versões futuras incluem:
 ## 💡 Objetivo do projeto
 
 Além de ser um aplicativo funcional, o ClimTech também foi desenvolvido como um projeto de portfólio e aprendizado, mostrando como é possível criar uma aplicação moderna de meteorologia utilizando Flutter, APIs gratuitas e um cuidado especial com design e experiência do usuário.
-
-## Link do protótipo
-
-[Protótipo no Figma](https://www.figma.com/design/SQiS0hzKZ9o0EIiSOq01aF/app-clima?node-id=54-870&t=RzEw6KqIhyNOfgug-1)
-
-[Apresentação do Projeto](https://www.figma.com/proto/SQiS0hzKZ9o0EIiSOq01aF/app-clima?page-id=0%3A1&node-id=6-86&p=f&viewport=1075%2C307%2C0.2&t=dqg5gtIGMf5T6sX7-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=6%3A86)

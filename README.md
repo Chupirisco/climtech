@@ -78,5 +78,6 @@ Além de ser um aplicativo funcional, o ClimTech também foi desenvolvido como u
 
 ## Link do protótipo
 
-Protótipo: https://www.figma.com/design/SQiS0hzKZ9o0EIiSOq01aF/app-clima?node-id=54-870&t=RzEw6KqIhyNOfgug-1
-Apresentação: https://www.figma.com/proto/SQiS0hzKZ9o0EIiSOq01aF/app-clima?page-id=0%3A1&node-id=6-86&p=f&viewport=1075%2C307%2C0.2&t=dqg5gtIGMf5T6sX7-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=6%3A86
+[Protótipo no Figma](https://www.figma.com/design/SQiS0hzKZ9o0EIiSOq01aF/app-clima?node-id=54-870&t=RzEw6KqIhyNOfgug-1)
+
+[Apresentação do Projeto](https://www.figma.com/proto/SQiS0hzKZ9o0EIiSOq01aF/app-clima?page-id=0%3A1&node-id=6-86&p=f&viewport=1075%2C307%2C0.2&t=dqg5gtIGMf5T6sX7-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=6%3A86)

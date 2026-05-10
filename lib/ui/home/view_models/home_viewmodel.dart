@@ -1,5 +1,6 @@
 import 'package:climtech/data/repositories/local/consultar_local.dart';
 import 'package:climtech/domain/models/temperatura_model.dart';
+import 'package:climtech/domain/regras_de_negocio/checar_permissao.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -97,9 +98,7 @@ class HomeViewmodel extends ChangeNotifier {
   // pega a localização atual do dispositivo
   Future<void> pegarlocalAtual() async {
     try {
-      Position posicao = await _posicaoAtual();
-      listaCompleta.latitude = posicao.latitude;
-      listaCompleta.longitude = posicao.longitude;
+      await _posicaoAtual();
     } catch (e) {
       // ignore: avoid_print
       return print(e.toString());
@@ -107,29 +106,16 @@ class HomeViewmodel extends ChangeNotifier {
   }
 
   // checa as permições e faz a busca pela localização
-  Future<Position> _posicaoAtual() async {
-    LocationPermission permissao;
-    bool ativado = await Geolocator.isLocationServiceEnabled();
-
-    if (!ativado) {
-      return Future.error('Ative a localização no smartphone');
+  Future<void> _posicaoAtual() async {
+    if (await checarPermissao()) {
+      final posicao = await Geolocator.getCurrentPosition();
+      listaCompleta.latitude = posicao.latitude;
+      listaCompleta.longitude = posicao.longitude;
+    } else {
+      listaCompleta.latitude = -15.793889;
+      listaCompleta.longitude = -47.882778;
+      return;
     }
-
-    permissao = await Geolocator.checkPermission();
-
-    if (permissao == LocationPermission.denied) {
-      permissao = await Geolocator.requestPermission();
-
-      if (permissao == LocationPermission.denied) {
-        return Future.error('altorize o acesso a localização no smartphone');
-      }
-    }
-
-    if (permissao == LocationPermission.deniedForever) {
-      return Future.error('altorize o acesso a localização no smartphone');
-    }
-
-    return Geolocator.getCurrentPosition();
   }
 
   // executa quando um dia é selecionado no calendario

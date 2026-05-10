@@ -60,7 +60,7 @@ Future<Map<String, String>> obterCidadeEstado(double lat, double lon) async {
   final response = await http.get(
     url,
     headers: {
-      'User-Agent': 'climtech-app/1.0 (yurigabrielsouza10@gmail.com)',
+      'User-Agent': 'climtech-app/1.0 (seuemail@gmail.com)',
       'Accept-Language': 'pt-BR',
     },
   );

@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       homeProvider.temperaturaAgora == null
-                          ? 'Carregando'
+                          ? 'Verifique sua conexão com a internet e tente novamente'
                           : '${homeProvider.temperaturaAgora}°',
                       style: estiloTexto(22),
                     ),

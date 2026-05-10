@@ -1,4 +1,4 @@
-# ClimTech ☁️
+# <img src="assets/img/logo.png" width="50"/>  ClimTech
 
 O **ClimTech** é um aplicativo de previsão do tempo desenvolvido em Flutter com foco em unir **meteorologia e design moderno** em uma experiência simples, leve e agradável de usar.
 
